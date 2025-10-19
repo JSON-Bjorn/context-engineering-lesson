@@ -20,7 +20,7 @@ __version__ = "1.0.0"
 __author__ = "[Your Name]"
 __license__ = "Apache 2.0"
 
-# Import key functions for convenient access
+# Import from modules that exist
 from .token_manager import (
     count_tokens,
     fits_in_budget,
@@ -34,25 +34,23 @@ from .helpers import (
     format_context,
 )
 
-from .evaluation import (
-    evaluate_answer,
-    LLMEvaluator,
-)
+# Conditional imports for modules not yet created
+try:
+    from .evaluation import (
+        evaluate_answer,
+        LLMEvaluator,
+    )
+except ImportError:
+    # evaluation.py not created yet
+    pass
 
-# Define public API
+# Update __all__ to only include what's currently available
 __all__ = [
-    # Token management
     'count_tokens',
     'fits_in_budget',
     'TokenBudgetManager',
-
-    # Data utilities
     'load_documents',
     'load_questions',
     'calculate_similarity',
     'format_context',
-
-    # Evaluation
-    'evaluate_answer',
-    'LLMEvaluator',
 ]
