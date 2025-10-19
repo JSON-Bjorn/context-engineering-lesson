@@ -70,3 +70,4 @@ htmlcov/
 *.tmp
 *.bak
 temp/
+/ignore
