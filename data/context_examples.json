@@ -1,0 +1,104 @@
+{
+  "examples": [
+    {
+      "id": "ex_001",
+      "scenario": "User query with 5 relevant documents and 4K token limit using sandwich strategy",
+      "query": "What are the best practices for context window management?",
+      "strategy": "sandwich",
+      "documents_selected": ["doc_001", "doc_002", "doc_008", "doc_003", "doc_007"],
+      "assembled_context": "Document 1: Introduction to Context Windows\n\nA context window is the maximum amount of text, measured in tokens, that a Large Language Model (LLM) can process in a single request. This fundamental constraint shapes how we interact with and utilize these powerful AI systems. The context window encompasses everything: the system instructions, the user's prompt, any retrieved documents or background information, the conversation history in multi-turn dialogues, and the space reserved for the model's response. Understanding this limitation is crucial for effective prompt engineering and system design.\n\n---\n\nDocument 2: Token Counting and Budget Management\n\nTokens are the fundamental units that LLMs process. Understanding tokenization is essential for accurate context budgeting. Budget management strategies: Always reserve overhead for system instructions, the user's question, and the model's response - typically 200-400 tokens. Monitor token consumption in real-time as you assemble context. Implement truncation strategies for when content exceeds limits: hard cutoffs at token boundaries, intelligent summarization of less critical sections, or dynamic allocation based on relevance scores.\n\n---\n\nDocument 3: Memory Management in Multi-Turn Conversations\n\nMulti-turn conversations present unique context engineering challenges. Each exchange adds to the context, eventually exceeding token limits. Memory management strategies include sliding window, summarization, selective retention, and hierarchical memory approaches.\n\n---\n\nDocument 4: The Lost in the Middle Phenomenon\n\nResearch by Liu et al. (2023) revealed a critical flaw in how LLMs process long contexts: information positioned in the middle of long contexts is significantly less likely to be recalled and utilized than information at the beginning or end. When relevant information appeared in the first 10% or last 10% of the context, models achieved 80-90% accuracy. However, when the same information appeared in the middle 50% of the context, accuracy dropped to 40-60%. Practical implications: When designing RAG systems, place the most relevant retrieved documents at the beginning or end of the context, not the middle.\n\n---\n\nDocument 5: Hierarchical Summarization for Context Compression\n\nWhen facing severe token constraints, hierarchical summarization offers a powerful technique for compressing large amounts of information while preserving critical content. Implementation approach: Rank all candidate documents by relevance score using semantic similarity to the query. Define a threshold (e.g., top 30% of documents) for full inclusion. Documents above this threshold are included in their entirety. Documents below the threshold are passed through a summarization process. Hierarchical summarization typically increases coverage by 2-3x within the same token budget.",
+      "rationale": "Top 2 most relevant documents (doc_001, doc_002) placed at start for primacy effect. Medium relevance document (doc_008) in middle where lost-in-middle effect is acceptable. High relevance documents (doc_003, doc_007) at end for recency effect. This maximizes attention to critical information while efficiently using token budget.",
+      "tokens_used": 489,
+      "quality_score": 0.89,
+      "relevance_distribution": {
+        "high_relevance_start": 2,
+        "medium_relevance_middle": 1,
+        "high_relevance_end": 2
+      }
+    },
+    {
+      "id": "ex_002",
+      "scenario": "RAG system with 8 chunks retrieved, using primacy strategy for factual query",
+      "query": "How has the size of context windows evolved in recent LLM models?",
+      "strategy": "primacy",
+      "documents_selected": ["doc_001", "doc_002", "doc_004", "doc_006"],
+      "assembled_context": "Document 1: Introduction to Context Windows (HIGHEST RELEVANCE)\n\nHistorically, context windows have grown dramatically. Early GPT-3 models offered 4,096 tokens (roughly 3,000 words). GPT-4 expanded this to 8,192 tokens in its initial release, then 32,768 in extended versions. Claude 2 pushed boundaries with 100,000 tokens, and current models like Claude 3.5 Sonnet offer up to 200,000 tokens. This expansion enables new applications: processing entire books, analyzing lengthy codebases, maintaining extended conversations, and retrieving information from large document collections.\n\n---\n\nDocument 2: Token Counting and Budget Management (HIGH RELEVANCE)\n\nMost modern LLMs use subword tokenization schemes. GPT models employ Byte Pair Encoding (BPE) with the cl100k_base encoding. Practical token estimation rules: English text averages about 0.75 tokens per word, or approximately 1,300-1,500 words per 1,000 tokens.\n\n---\n\nDocument 3: Context Placement Strategies (MEDIUM RELEVANCE)\n\nThe order in which you present information within a context window significantly impacts model performance. Primacy placement leverages the strong attention models give to early context.\n\n---\n\nDocument 4: Retrieval-Augmented Generation (LOWER RELEVANCE)\n\nRAG systems face unique context engineering challenges. They must combine retrieved documents with user queries in a way that maximizes answer quality while respecting token limits.",
+      "rationale": "Factual query benefits from primacy placement. Most relevant document (doc_001) containing specific evolution timeline placed first to ensure strong attention. Supporting documents follow in descending relevance order. This strategy ensures the factual answer appears early where model attention is strongest.",
+      "tokens_used": 312,
+      "quality_score": 0.92,
+      "relevance_distribution": {
+        "highest": 1,
+        "high": 1,
+        "medium": 1,
+        "low": 1
+      }
+    },
+    {
+      "id": "ex_003",
+      "scenario": "Complex analytical query requiring synthesis, using recency strategy",
+      "query": "What optimization techniques can improve RAG system performance?",
+      "strategy": "recency",
+      "documents_selected": ["doc_006", "doc_007", "doc_009", "doc_005"],
+      "assembled_context": "Document 1: The Sandwich Strategy (BACKGROUND CONTEXT)\n\nThe sandwich strategy represents the current best practice for organizing information in long contexts. By placing high-priority content at both the beginning and end of the context, with lower-priority material in the middle, you maximize model performance.\n\n---\n\nDocument 2: Case Study - Customer Support (SUPPORTING CONTEXT)\n\nThe e-commerce company implemented several optimization phases: sandwich placement improved accuracy by 6 percentage points, hierarchical summarization reduced tokens by 35% while improving accuracy further, and dynamic allocation added another 3 percentage point gain.\n\n---\n\nDocument 3: Hierarchical Summarization (HIGH RELEVANCE)\n\nWhen facing severe token constraints, hierarchical summarization offers a powerful technique for compressing large amounts of information while preserving critical content. Implementation approach: Rank all candidate documents by relevance score. Define a threshold for full inclusion. Documents above threshold included entirely, below threshold are summarized. This typically increases coverage by 2-3x. Context compression methods: Summarize less-relevant chunks while keeping high-relevance chunks in full. Use LLM-based filtering to remove irrelevant sentences. Dynamic token allocation assigns more tokens to higher-relevance chunks.\n\n---\n\nDocument 4: RAG Context Assembly (HIGHEST RELEVANCE - RECENCY POSITION)\n\nBest practices for RAG context assembly: Use semantic chunking that respects document structure rather than fixed-size splits. Implement relevance re-ranking after initial retrieval using a cross-encoder model for more accurate similarity scoring. Apply deduplication to remove highly similar chunks. Include metadata with each chunk. Use the sandwich strategy for chunk ordering. Advanced techniques: Parent-child chunking maintains both fine-grained chunks for retrieval and their parent sections for context. Hypothetical document embeddings (HyDE) generate hypothetical answers to the query and use these for retrieval. Multi-hop retrieval performs iterative searches. Query decomposition breaks complex queries into simpler sub-queries. Context compression methods include summarization, fact extraction, and dynamic token allocation.",
+      "rationale": "Complex analytical query benefits from recency placement to keep critical synthesis information fresh during generation. Background context (doc_005, doc_009) placed early to establish foundation. Most relevant technical details (doc_007, doc_006) placed at end for maximum recall during response generation. This ensures the model has immediate access to specific techniques when formulating its answer.",
+      "tokens_used": 378,
+      "quality_score": 0.87,
+      "relevance_distribution": {
+        "background": 1,
+        "supporting": 1,
+        "high_relevance_end": 1,
+        "highest_relevance_end": 1
+      }
+    },
+    {
+      "id": "ex_004",
+      "scenario": "Multi-document question requiring comparison, using balanced sandwich approach",
+      "query": "Compare the customer support and legal document Q&A case studies in terms of optimization approaches and results.",
+      "strategy": "sandwich",
+      "documents_selected": ["doc_009", "doc_005", "doc_006", "doc_010"],
+      "assembled_context": "Document 1: Case Study - Customer Support Context Engineering (PRIMARY FOCUS - START)\n\nA major e-commerce company implemented a customer support chatbot using context engineering best practices. Initial system: Retrieved top 10 articles, concatenated in relevance order, 67% accuracy, $0.18 per query. Optimizations: Phase 1 - Sandwich placement: +6 percentage points accuracy. Phase 2 - Hierarchical summarization: -35% tokens, +9 points accuracy overall. Phase 3 - Dynamic allocation: +12 points overall. Phase 4 - User context integration: 84% final accuracy, +17 points overall. Final results: 11% cost reduction, 28% improvement in customer satisfaction, 35% reduction in escalations. Key learnings: Context placement matters more than retrieval quality alone. Hierarchical approaches enable better information coverage. Iterative optimization compounds gains.\n\n---\n\nDocument 2: The Sandwich Strategy (BACKGROUND)\n\nThe sandwich strategy achieves 15-25% higher accuracy than naive concatenation, 8-12% better than pure primacy, and 3-7% better than pure recency. Implementation challenges include requiring relevance scoring mechanism and computational overhead for document ranking.\n\n---\n\nDocument 3: RAG Context Assembly (BACKGROUND)\n\nAdvanced techniques include parent-child chunking, hypothetical document embeddings (HyDE), multi-hop retrieval, and query decomposition. Context compression methods enable better token utilization.\n\n---\n\nDocument 4: Case Study - Document Q&A System Optimization (PRIMARY FOCUS - END)\n\nA legal tech startup built a document Q&A system for analyzing contracts. Requirements: Handle 5,000-50,000 token contracts, 95%+ accuracy, under 10 seconds processing. Initial approach: 78% accuracy, 8 seconds. Optimizations: Optimization 1 - Parent-child chunking: 85% accuracy. Optimization 2 - Query decomposition: 89% accuracy (12 seconds). Optimization 3 - Semantic section detection: 92% accuracy, 10 seconds (back under target). Optimization 4 - Attention-guided refinement: 96% accuracy. Final hybrid system: Routes queries by type to appropriate strategy. 94% overall accuracy, 11 seconds average. Customer outcome: 10x increase in contract review throughput, 60% reduction in legal review costs, 87% team adoption.",
+      "rationale": "Comparison query requires both case studies to be highly accessible. Sandwich approach places both primary documents (doc_009, doc_010) at context boundaries - customer support case at start, legal case at end. Supporting context about strategies used in both cases (doc_005, doc_006) fills the middle. This ensures strong attention to both comparison subjects while providing necessary background on techniques mentioned in both cases.",
+      "tokens_used": 445,
+      "quality_score": 0.91,
+      "relevance_distribution": {
+        "primary_start": 1,
+        "background_middle": 2,
+        "primary_end": 1
+      }
+    },
+    {
+      "id": "ex_005",
+      "scenario": "Comprehensive overview query requiring broad coverage, using hierarchical approach",
+      "query": "Provide a comprehensive overview of context engineering strategies and their applications.",
+      "strategy": "hierarchical_summary",
+      "documents_selected": ["doc_001", "doc_003", "doc_005", "doc_004", "doc_006", "doc_007"],
+      "assembled_context": "Document 1: Introduction to Context Windows (FULL TEXT - FOUNDATIONAL)\n\nA context window is the maximum amount of text, measured in tokens, that a Large Language Model (LLM) can process in a single request. This fundamental constraint shapes how we interact with and utilize these powerful AI systems. Historically, context windows have grown dramatically. Early GPT-3 models offered 4,096 tokens. GPT-4 expanded this to 8,192 tokens, then 32,768 tokens. Claude 2 pushed boundaries with 100,000 tokens, and current models like Claude 3.5 Sonnet offer up to 200,000 tokens. However, larger context windows present challenges: increased cost per request, slower inference times, and the 'lost in the middle' phenomenon. Effective context engineering requires understanding these trade-offs.\n\n---\n\nDocument 2: Lost in the Middle Phenomenon (FULL TEXT - CRITICAL CONCEPT)\n\nResearch by Liu et al. (2023) revealed that information positioned in the middle of long contexts is significantly less likely to be recalled than information at the beginning or end. Models achieved 80-90% accuracy for information in the first or last 10% of context, but only 40-60% accuracy for information in the middle 50%. This occurs due to implicit positional biases in transformer architectures' attention mechanisms. Practical implications: Place the most relevant retrieved documents at the beginning or end of the context, not the middle.\n\n---\n\nDocument 3: Placement Strategies Summary (SUMMARIZED - 40% of original)\n\nPrimacy places important information first, leveraging early attention. Recency places it last, capitalizing on proximity bias. Empirical results show recency typically outperforms primacy by 5-15% on factual retrieval tasks. Best practices: Use primacy for instructions and frameworks, recency for facts and details, sandwich strategy for complex tasks.\n\n---\n\nDocument 4: Sandwich Strategy Overview (SUMMARIZED - 35% of original)\n\nThe sandwich strategy places high-priority content at both beginning and end of context, with lower-priority material in middle. Benchmark tests show 15-25% higher accuracy than naive concatenation. Implementation involves ranking documents by relevance, selecting top 20-40% as high-priority, and splitting into two subgroups for start and end positions.\n\n---\n\nDocument 5: RAG Applications Summary (SUMMARIZED - 30% of original)\n\nRAG systems combine retrieved documents with queries. Best practices include semantic chunking, relevance re-ranking, deduplication, metadata inclusion, and sandwich ordering. Advanced techniques: parent-child chunking, HyDE, multi-hop retrieval, query decomposition.\n\n---\n\nDocument 6: Optimization Techniques Brief (SUMMARIZED - 25% of original)\n\nHierarchical summarization selectively summarizes less-relevant documents while keeping high-relevance documents complete, typically increasing coverage by 2-3x. Context compression methods include summarization, fact extraction, and dynamic token allocation.",
+      "rationale": "Comprehensive overview query requires maximum coverage across all strategies. Hierarchical approach: Full text for foundational concepts (doc_001, doc_003) that establish context engineering basics. Detailed summaries (40% length) for core strategies (doc_004, doc_005) to cover key approaches. Brief summaries (25-30% length) for advanced topics (doc_006, doc_007). This provides broad coverage within token constraints while maintaining depth on critical concepts. Sandwich placement ensures foundational content at start and advanced optimization at end.",
+      "tokens_used": 456,
+      "quality_score": 0.85,
+      "relevance_distribution": {
+        "full_text": 2,
+        "detailed_summary": 2,
+        "brief_summary": 2
+      }
+    }
+  ],
+  "metadata": {
+    "total_examples": 5,
+    "strategies_demonstrated": ["sandwich", "primacy", "recency", "hierarchical_summary"],
+    "strategy_distribution": {
+      "sandwich": 2,
+      "primacy": 1,
+      "recency": 1,
+      "hierarchical_summary": 1
+    },
+    "avg_tokens_per_example": 416,
+    "avg_quality_score": 0.888,
+    "query_types_covered": ["factual", "analytical", "comparison", "synthesis", "overview"],
+    "documents_used": ["doc_001", "doc_002", "doc_003", "doc_004", "doc_005", "doc_006", "doc_007", "doc_008", "doc_009", "doc_010"],
+    "created": "2025-10-19",
+    "purpose": "Reference examples of effective context engineering strategies for educational lesson",
+    "license": "Apache 2.0",
+    "author": "[Your Name]"
+  }
+}
