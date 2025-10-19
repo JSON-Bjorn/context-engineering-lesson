@@ -1,0 +1,108 @@
+{
+  "questions": [
+    {
+      "id": "q_001",
+      "question": "What is a context window and how has its size evolved across different LLM generations?",
+      "ground_truth_answer": "A context window is the maximum amount of text, measured in tokens, that an LLM can process in a single request. It has evolved significantly: GPT-3 started with 4,096 tokens, GPT-4 expanded to 8,192 then 32,768 tokens, Claude 2 reached 100,000 tokens, and current models like Claude 3.5 Sonnet offer up to 200,000 tokens. This expansion enables processing of entire books, lengthy codebases, and extended conversations.",
+      "relevant_doc_ids": ["doc_001"],
+      "difficulty": "easy",
+      "question_type": "factual"
+    },
+    {
+      "id": "q_002",
+      "question": "Explain the 'lost in the middle' phenomenon and why it occurs in LLMs.",
+      "ground_truth_answer": "The 'lost in the middle' phenomenon refers to LLMs' significantly reduced ability to recall and utilize information positioned in the middle of long contexts compared to information at the beginning or end. Research shows models achieve 80-90% accuracy for information in the first or last 10% of context, but only 40-60% accuracy for information in the middle 50%. This occurs due to implicit positional biases in transformer architectures' attention mechanisms and training patterns where critical information typically appears at document boundaries.",
+      "relevant_doc_ids": ["doc_003"],
+      "difficulty": "medium",
+      "question_type": "factual"
+    },
+    {
+      "id": "q_003",
+      "question": "Compare primacy and recency placement strategies. When should each be used?",
+      "ground_truth_answer": "Primacy placement puts important information at the start of the context, leveraging early attention and working well for instructions and foundational concepts. Recency placement puts critical information at the end, near the query, capitalizing on proximity bias and showing 5-15% better performance for factual retrieval in contexts over 4,000 tokens. Use primacy for instructions, schemas, and conceptual frameworks; use recency for facts, specific details, and retrieved documents in RAG systems. For complex tasks, combine both in a sandwich strategy.",
+      "relevant_doc_ids": ["doc_004"],
+      "difficulty": "medium",
+      "question_type": "comparison"
+    },
+    {
+      "id": "q_004",
+      "question": "How does the sandwich strategy work and what performance improvements does it typically achieve?",
+      "ground_truth_answer": "The sandwich strategy places high-priority content at both the beginning and end of the context, with lower-priority material in the middle. Implementation involves ranking documents by relevance, selecting the top 20-40% as high-priority, splitting this into two subgroups, and positioning one at the start and one at the end. Benchmark tests show 15-25% higher accuracy than naive concatenation, 8-12% better than pure primacy, and 3-7% better than pure recency across contexts from 4K to 32K tokens.",
+      "relevant_doc_ids": ["doc_005"],
+      "difficulty": "medium",
+      "question_type": "factual"
+    },
+    {
+      "id": "q_005",
+      "question": "What are the main challenges in RAG context assembly and what best practices address them?",
+      "ground_truth_answer": "Main challenges include redundant retrieved chunks, lack of surrounding context, unclear optimal ordering, token budget constraints, and split information at chunk boundaries. Best practices include: using semantic chunking that respects document structure, implementing relevance re-ranking with cross-encoders, applying deduplication, including metadata with chunks, and using sandwich strategy for ordering. Advanced techniques include parent-child chunking, hypothetical document embeddings (HyDE), and multi-hop retrieval.",
+      "relevant_doc_ids": ["doc_006"],
+      "difficulty": "hard",
+      "question_type": "application"
+    },
+    {
+      "id": "q_006",
+      "question": "Describe hierarchical summarization and its typical impact on coverage and accuracy.",
+      "ground_truth_answer": "Hierarchical summarization selectively summarizes less-relevant documents while keeping high-relevance documents complete, allowing broader coverage within token limits. Documents are ranked by relevance with top documents (e.g., top 30%) included in full and others summarized to 20-30% of original length. This typically increases coverage by 2-3x. Accuracy impact varies: minimal loss (0-5%) when answers are in high-relevance documents, potential gain (10-20%) for questions requiring synthesis across many documents, and potential loss (15-30%) when answers are in low-relevance documents that get summarized.",
+      "relevant_doc_ids": ["doc_007"],
+      "difficulty": "medium",
+      "question_type": "factual"
+    },
+    {
+      "id": "q_007",
+      "question": "What memory management strategies are effective for multi-turn conversations and what are their trade-offs?",
+      "ground_truth_answer": "Effective strategies include: sliding window (maintains recent N turns, simple but risks losing important context), summarization (periodically compresses old history while maintaining recent turns in full, balances preservation with efficiency), selective retention (preserves important messages based on scoring, requires importance classification), and hierarchical memory (maintains summaries at multiple time scales). The choice depends on use case: sliding window for simple conversations, summarization for balanced needs, selective retention for information-dense interactions, and hierarchical memory for complex long-running conversations.",
+      "relevant_doc_ids": ["doc_008"],
+      "difficulty": "hard",
+      "question_type": "comparison"
+    },
+    {
+      "id": "q_008",
+      "question": "In the customer support case study, what was the cumulative impact of all optimization phases?",
+      "ground_truth_answer": "The customer support system achieved significant improvements across all metrics: accuracy increased from 67% to 84% (+17 percentage points), cost per query decreased from $0.18 to $0.16 (11% reduction despite added features), customer satisfaction improved from 3.2/5.0 to 4.1/5.0 (+28%), and escalations to human agents decreased by 35%. The optimizations included sandwich placement, hierarchical summarization, dynamic allocation, and user context integration. Key learning: iterative optimization compounds gains and context placement matters more than retrieval quality alone.",
+      "relevant_doc_ids": ["doc_009"],
+      "difficulty": "easy",
+      "question_type": "factual"
+    },
+    {
+      "id": "q_009",
+      "question": "How did the legal document Q&A system use different strategies for different query types?",
+      "ground_truth_answer": "The system implemented a hybrid approach that automatically classifies queries and routes to appropriate strategies: simple factual queries use basic parent-child chunking with sandwich placement for speed, complex analytical queries use query decomposition with section-aware retrieval for better coverage, and critical accuracy-required queries use attention-guided refinement with two-pass processing. This adaptive approach achieved 94% overall accuracy (weighted average) with 11-second average query time, balancing speed and accuracy based on query characteristics.",
+      "relevant_doc_ids": ["doc_010"],
+      "difficulty": "medium",
+      "question_type": "application"
+    },
+    {
+      "id": "q_010",
+      "question": "Synthesize the key principles of effective context engineering based on all the strategies and case studies.",
+      "ground_truth_answer": "Key principles include: (1) Position matters - place critical information at context boundaries (start/end) using sandwich strategy to exploit primacy and recency effects while avoiding the 'lost in the middle' problem. (2) Budget strategically - use hierarchical approaches to maximize coverage, allocate tokens proportionally to relevance, and reserve overhead for instructions and responses. (3) Adapt to use case - match strategy to query type (factual vs analytical), apply different techniques for different contexts (RAG vs conversation), and iterate based on measured performance. (4) Optimize systematically - measure baseline performance, implement incremental improvements, and compound gains through multiple techniques. (5) Balance trade-offs - consider accuracy vs cost, coverage vs precision, and speed vs quality based on application requirements.",
+      "relevant_doc_ids": ["doc_001", "doc_003", "doc_004", "doc_005", "doc_006", "doc_007", "doc_009", "doc_010"],
+      "difficulty": "hard",
+      "question_type": "synthesis"
+    }
+  ],
+  "metadata": {
+    "total_questions": 10,
+    "difficulty_distribution": {
+      "easy": 2,
+      "medium": 5,
+      "hard": 3
+    },
+    "question_types": ["factual", "comparison", "application", "synthesis"],
+    "question_type_distribution": {
+      "factual": 5,
+      "comparison": 2,
+      "application": 2,
+      "synthesis": 1
+    },
+    "coverage": {
+      "documents_referenced": 10,
+      "avg_docs_per_question": 1.8,
+      "multi_document_questions": 1
+    },
+    "created": "2025-10-19",
+    "purpose": "Evaluation dataset for context engineering lesson",
+    "license": "Apache 2.0",
+    "author": "[Your Name]"
+  }
+}
