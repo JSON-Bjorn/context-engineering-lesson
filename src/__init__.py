@@ -34,23 +34,26 @@ from .helpers import (
     format_context,
 )
 
-# Conditional imports for modules not yet created
-try:
-    from .evaluation import (
-        evaluate_answer,
-        LLMEvaluator,
-    )
-except ImportError:
-    # evaluation.py not created yet
-    pass
+# Import from evaluation module
+from .evaluation import (
+    evaluate_answer,
+    LLMEvaluator,
+)
 
-# Update __all__ to only include what's currently available
+# Define public API
 __all__ = [
+    # Token management
     'count_tokens',
     'fits_in_budget',
     'TokenBudgetManager',
+
+    # Data utilities
     'load_documents',
     'load_questions',
     'calculate_similarity',
     'format_context',
+
+    # Evaluation
+    'evaluate_answer',
+    'LLMEvaluator',
 ]
