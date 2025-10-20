@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -26,7 +27,7 @@
             background: white;
             padding: 40px;
             border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
         }
 
         /* === HEADER === */
@@ -113,7 +114,8 @@
         }
 
         /* === LISTS === */
-        ul, ol {
+        ul,
+        ol {
             margin: 15px 0 15px 30px;
         }
 
@@ -158,7 +160,8 @@
             font-size: 1em;
         }
 
-        th, td {
+        th,
+        td {
             border: 1px solid #ddd;
             padding: 12px 15px;
             text-align: left;
@@ -242,6 +245,7 @@
         }
     </style>
 </head>
+
 <body>
     <div class="container">
         <!-- HEADER -->
@@ -259,12 +263,14 @@
             <h2>📚 Welcome to Context Engineering</h2>
             <p>
                 This interactive lesson teaches you the fundamentals of <strong>context engineering</strong> –
-                the art and science of optimizing how information is structured and presented to Large Language Models (LLMs).
+                the art and science of optimizing how information is structured and presented to Large Language Models
+                (LLMs).
             </p>
 
             <h3>What You'll Learn</h3>
             <ul>
-                <li><strong>Context Window Mechanics:</strong> Understand token limits, counting, and budget constraints</li>
+                <li><strong>Context Window Mechanics:</strong> Understand token limits, counting, and budget constraints
+                </li>
                 <li><strong>The "Lost in the Middle" Problem:</strong> Why position matters in long contexts</li>
                 <li><strong>Strategic Placement:</strong> Primacy, recency, and sandwich techniques</li>
                 <li><strong>Optimization Methods:</strong> Compression, summarization, and dynamic allocation</li>
@@ -360,9 +366,9 @@
         <section id="setup">
             <h2>🚀 Setup Instructions</h2>
 
-            <h3>Step 1: Extract the Lesson</h3>
-            <div class="code-block"><code>unzip VG_[Name]_[Date].zip
-cd VG_[Name]_[Date]</code></div>
+            <h3>Step 1: Clone the Repository</h3>
+            <div class="code-block"><code>git clone &lt;repository-url&gt;
+cd context-engineering-lesson/</code></div>
 
             <h3>Step 2: Create Virtual Environment</h3>
 
@@ -396,6 +402,17 @@ pip install -r requirements.txt</code></div>
 python -c "import transformers; import torch; print('✅ Setup successful!')"</code></div>
 
             <p>If you see "✅ Setup successful!" you're ready to go!</p>
+
+            <h3>Step 4: Run the Main Entrypoint</h3>
+            <p>Now run the main lesson entrypoint script:</p>
+            <div class="code-block"><code># Linux/Mac
+./run_lesson.sh
+
+# Windows (Git Bash)
+bash run_lesson.sh</code></div>
+
+            <p>This script will guide you through the complete lesson workflow and provide detailed instructions for the
+                next steps.</p>
         </section>
 
         <!-- SECTION 4: RUNNING THE LESSON -->
@@ -454,7 +471,8 @@ python -c "import transformers; import torch; print('✅ Setup successful!')"</c
             </div>
 
             <h3>Step 3: Verify Your Environment</h3>
-            <p>Before starting the lesson, run this code in the first cell to verify you're using the correct environment:</p>
+            <p>Before starting the lesson, run this code in the first cell to verify you're using the correct
+                environment:</p>
             <div class="code-block"><code>import sys
 print(sys.executable)</code></div>
             <p>
@@ -471,7 +489,7 @@ print(sys.executable)</code></div>
                 and select the correct kernel.
             </div>
 
-            <h3>Step 4: Work Through the Lesson</h3>
+            <h3>Step 5: Work Through the Lesson</h3>
             <ol>
                 <li>Read the instructions in each cell carefully</li>
                 <li>Run cells sequentially using Shift+Enter</li>
@@ -479,15 +497,6 @@ print(sys.executable)</code></div>
                 <li>Observe the output and metrics after each phase</li>
                 <li>Don't skip ahead - each phase builds on the previous</li>
             </ol>
-
-            <h3>Quick Verification Script (Optional)</h3>
-            <p>If you want to see detailed instructions and verify your setup, you can run:</p>
-            <div class="code-block"><code># Make script executable (Linux/Mac)
-chmod +x run_lesson.sh
-
-# Run verification script
-./run_lesson.sh</code></div>
-            <p>This script checks prerequisites and displays detailed instructions, but does NOT auto-launch Jupyter.</p>
 
             <div class="info-box">
                 <strong>💡 First Run Takes Longer</strong>
@@ -763,7 +772,7 @@ python src/verify.py</code></div>
 
             <p>
                 <em>Note: Actual results may vary based on hardware and model loading time,
-                but relative improvements should be consistent.</em>
+                    but relative improvements should be consistent.</em>
             </p>
 
             <h3>Real-World Applications</h3>
@@ -844,4 +853,5 @@ python src/verify.py</code></div>
         </div>
     </div>
 </body>
+
 </html>
