@@ -1,0 +1,791 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Context Engineering - Interactive Micro-Lesson</title>
+    <style>
+        /* === GLOBAL STYLES === */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: #2c3e50;
+            background: #f5f7fa;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        /* === HEADER === */
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px;
+            border-radius: 10px;
+            margin: -40px -40px 40px -40px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.95;
+        }
+
+        .header .meta {
+            margin-top: 15px;
+            font-size: 0.9em;
+            opacity: 0.85;
+        }
+
+        /* === SECTIONS === */
+        h2 {
+            color: #667eea;
+            font-size: 1.8em;
+            margin: 30px 0 15px 0;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #667eea;
+        }
+
+        h3 {
+            color: #764ba2;
+            font-size: 1.3em;
+            margin: 20px 0 10px 0;
+        }
+
+        h4 {
+            color: #555;
+            font-size: 1.1em;
+            margin: 15px 0 8px 0;
+        }
+
+        p {
+            margin: 12px 0;
+            font-size: 1.05em;
+        }
+
+        /* === CALLOUT BOXES === */
+        .info-box {
+            background: #e3f2fd;
+            border-left: 5px solid #2196f3;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+
+        .info-box.warning {
+            background: #fff3cd;
+            border-left-color: #ffc107;
+        }
+
+        .info-box.success {
+            background: #d4edda;
+            border-left-color: #28a745;
+        }
+
+        .info-box.danger {
+            background: #f8d7da;
+            border-left-color: #dc3545;
+        }
+
+        .info-box strong {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 1.1em;
+        }
+
+        /* === LISTS === */
+        ul, ol {
+            margin: 15px 0 15px 30px;
+        }
+
+        li {
+            margin: 8px 0;
+            font-size: 1.05em;
+        }
+
+        /* === CODE BLOCKS === */
+        .code-block {
+            background: #282c34;
+            color: #abb2bf;
+            padding: 20px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 15px 0;
+            font-family: 'Courier New', Consolas, Monaco, monospace;
+            font-size: 0.95em;
+            line-height: 1.5;
+        }
+
+        code {
+            background: #f4f4f4;
+            padding: 3px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', Consolas, Monaco, monospace;
+            font-size: 0.9em;
+            color: #e83e8c;
+        }
+
+        .code-block code {
+            background: transparent;
+            padding: 0;
+            color: #abb2bf;
+        }
+
+        /* === TABLES === */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            font-size: 1em;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px 15px;
+            text-align: left;
+        }
+
+        th {
+            background: #667eea;
+            color: white;
+            font-weight: 600;
+        }
+
+        tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+
+        /* === BADGES === */
+        .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: 600;
+            margin-right: 8px;
+        }
+
+        .badge.time {
+            background: #e3f2fd;
+            color: #1976d2;
+        }
+
+        .badge.difficulty {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        /* === BUTTONS === */
+        .btn {
+            display: inline-block;
+            padding: 12px 24px;
+            background: #667eea;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: 600;
+            margin: 10px 10px 10px 0;
+            transition: background 0.3s;
+        }
+
+        .btn:hover {
+            background: #5568d3;
+        }
+
+        /* === FOOTER === */
+        .footer {
+            margin-top: 50px;
+            padding-top: 30px;
+            border-top: 2px solid #e0e0e0;
+            text-align: center;
+            color: #777;
+            font-size: 0.95em;
+        }
+
+        /* === RESPONSIVE === */
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+
+            .header {
+                margin: -20px -20px 20px -20px;
+                padding: 25px;
+            }
+
+            .header h1 {
+                font-size: 1.8em;
+            }
+
+            h2 {
+                font-size: 1.5em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- HEADER -->
+        <div class="header">
+            <h1>🎯 Context Engineering</h1>
+            <p>Master LLM Context Window Optimization in 30 Minutes</p>
+            <div class="meta">
+                <span class="badge time">⏱️ 30 minutes</span>
+                <span class="badge difficulty">📊 Intermediate</span>
+            </div>
+        </div>
+
+        <!-- SECTION 1: WELCOME & OVERVIEW -->
+        <section id="welcome">
+            <h2>📚 Welcome to Context Engineering</h2>
+            <p>
+                This interactive lesson teaches you the fundamentals of <strong>context engineering</strong> –
+                the art and science of optimizing how information is structured and presented to Large Language Models (LLMs).
+            </p>
+
+            <h3>What You'll Learn</h3>
+            <ul>
+                <li><strong>Context Window Mechanics:</strong> Understand token limits, counting, and budget constraints</li>
+                <li><strong>The "Lost in the Middle" Problem:</strong> Why position matters in long contexts</li>
+                <li><strong>Strategic Placement:</strong> Primacy, recency, and sandwich techniques</li>
+                <li><strong>Optimization Methods:</strong> Compression, summarization, and dynamic allocation</li>
+                <li><strong>Quantitative Comparison:</strong> Measure and prove what works best</li>
+            </ul>
+
+            <div class="info-box success">
+                <strong>✅ 100% Free & Local</strong>
+                This lesson runs entirely on your machine using open-source models.
+                No API keys required, no cloud costs, no data sent to external services!
+            </div>
+
+            <h3>Why Context Engineering Matters</h3>
+            <p>
+                As LLMs become more powerful with larger context windows (200K+ tokens), the ability to
+                strategically engineer context becomes crucial for:
+            </p>
+            <ul>
+                <li>Building efficient RAG (Retrieval-Augmented Generation) systems</li>
+                <li>Managing multi-turn conversations with memory</li>
+                <li>Optimizing token usage and costs in production</li>
+                <li>Improving answer quality through smart context assembly</li>
+            </ul>
+        </section>
+
+        <!-- SECTION 2: PREREQUISITES -->
+        <section id="prerequisites">
+            <h2>⚙️ Prerequisites</h2>
+
+            <h3>Required Software</h3>
+            <ul>
+                <li><strong>Python 3.12:</strong> Must be installed and accessible</li>
+                <li><strong>uv or pip:</strong> Package manager (uv recommended for speed)</li>
+                <li><strong>Git:</strong> For cloning/extracting the lesson</li>
+                <li><strong>Jupyter:</strong> Installed automatically via requirements.txt</li>
+            </ul>
+
+            <h3>Hardware Requirements</h3>
+            <table>
+                <tr>
+                    <th>Component</th>
+                    <th>Minimum</th>
+                    <th>Recommended</th>
+                </tr>
+                <tr>
+                    <td>RAM</td>
+                    <td>8 GB</td>
+                    <td>16 GB</td>
+                </tr>
+                <tr>
+                    <td>Disk Space</td>
+                    <td>10 GB free</td>
+                    <td>15 GB free</td>
+                </tr>
+                <tr>
+                    <td>GPU</td>
+                    <td>None (CPU works)</td>
+                    <td>NVIDIA with 8GB+ VRAM</td>
+                </tr>
+                <tr>
+                    <td>Internet</td>
+                    <td>Required for initial model download (~7 GB)</td>
+                    <td>-</td>
+                </tr>
+            </table>
+
+            <div class="info-box">
+                <strong>ℹ️ Model Downloads</strong>
+                On first run, the lesson will automatically download:
+                <ul style="margin: 10px 0 0 20px;">
+                    <li>Qwen2.5-3B-Instruct (~6.5 GB) - Main LLM</li>
+                    <li>all-MiniLM-L6-v2 (~80 MB) - Embedding model</li>
+                </ul>
+                Total: ~6.6 GB. This happens once, then everything runs offline.
+            </div>
+
+            <h3>Knowledge Prerequisites</h3>
+            <ul>
+                <li>Basic Python programming</li>
+                <li>Familiarity with LLMs and prompting</li>
+                <li>Understanding of tokens (helpful but not required)</li>
+            </ul>
+
+            <h3>Time Commitment</h3>
+            <ul>
+                <li><strong>Setup:</strong> 10-15 minutes (one-time)</li>
+                <li><strong>Lesson:</strong> 30 minutes active work</li>
+                <li><strong>Model downloads:</strong> 10-20 minutes (depends on internet speed)</li>
+            </ul>
+        </section>
+
+        <!-- SECTION 3: SETUP INSTRUCTIONS -->
+        <section id="setup">
+            <h2>🚀 Setup Instructions</h2>
+
+            <h3>Step 1: Extract the Lesson</h3>
+            <div class="code-block"><code>unzip VG_[Name]_[Date].zip
+cd VG_[Name]_[Date]</code></div>
+
+            <h3>Step 2: Create Virtual Environment</h3>
+
+            <h4>Linux / MacOS:</h4>
+            <div class="code-block"><code># Make setup script executable
+chmod +x scripts/setup_venv.sh
+
+# Run setup script
+./scripts/setup_venv.sh
+
+# Activate the environment
+source .venv/bin/activate</code></div>
+
+            <h4>Windows:</h4>
+            <div class="code-block"><code># Run setup script
+scripts\setup_venv.bat
+
+# OR manually:
+python -m venv .venv
+.venv\Scripts\activate.bat
+pip install -r requirements.txt</code></div>
+
+            <div class="info-box warning">
+                <strong>⚠️ Important: Always Activate the Environment</strong>
+                Before running any lesson commands, ensure your virtual environment is activated.
+                You should see <code>(.venv)</code> in your terminal prompt.
+            </div>
+
+            <h3>Step 3: Verify Installation</h3>
+            <div class="code-block"><code># Test that dependencies are installed
+python -c "import transformers; import torch; print('✅ Setup successful!')"</code></div>
+
+            <p>If you see "✅ Setup successful!" you're ready to go!</p>
+        </section>
+
+        <!-- SECTION 4: RUNNING THE LESSON -->
+        <section id="running">
+            <h2>▶️ Running the Lesson</h2>
+
+            <h3>Quick Start (Recommended)</h3>
+            <div class="code-block"><code># Make entrypoint executable
+chmod +x run_lesson.sh
+
+# Run the lesson
+./run_lesson.sh</code></div>
+
+            <p>This script will:</p>
+            <ul>
+                <li>✅ Check all prerequisites</li>
+                <li>✅ Activate the virtual environment</li>
+                <li>✅ Verify dependencies</li>
+                <li>✅ Launch Jupyter Notebook</li>
+            </ul>
+
+            <h3>Manual Start (Alternative)</h3>
+            <div class="code-block"><code># Activate environment
+source .venv/bin/activate  # or .venv\Scripts\activate on Windows
+
+# Start Jupyter
+jupyter notebook notebooks/context_engineering_lesson.ipynb</code></div>
+
+            <h3>What to Expect</h3>
+            <ol>
+                <li>Jupyter will open in your default web browser</li>
+                <li>The lesson notebook will load automatically</li>
+                <li>Follow the instructions in each cell</li>
+                <li>Run cells sequentially (Shift+Enter)</li>
+                <li>Complete all TODO sections</li>
+            </ol>
+
+            <div class="info-box">
+                <strong>💡 First Run Takes Longer</strong>
+                The first time you run the lesson, models will download automatically (~6.6 GB).
+                This may take 10-20 minutes depending on your internet speed. Subsequent runs are instant!
+            </div>
+        </section>
+
+        <!-- SECTION 5: LESSON FLOW -->
+        <section id="flow">
+            <h2>📖 Lesson Flow</h2>
+
+            <p>The lesson is divided into 5 phases, each building on the previous:</p>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Phase</th>
+                        <th>Duration</th>
+                        <th>Activities</th>
+                        <th>Key Concepts</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>1. Context Windows</strong></td>
+                        <td>7 min</td>
+                        <td>Token counting, budget analysis</td>
+                        <td>Token limits, context constraints</td>
+                    </tr>
+                    <tr>
+                        <td><strong>2. Baseline</strong></td>
+                        <td>8 min</td>
+                        <td>Implement naive context assembly</td>
+                        <td>Basic concatenation, metrics</td>
+                    </tr>
+                    <tr>
+                        <td><strong>3. Strategic Placement</strong></td>
+                        <td>10 min</td>
+                        <td>Primacy, recency, sandwich strategies</td>
+                        <td>"Lost in the middle" problem</td>
+                    </tr>
+                    <tr>
+                        <td><strong>4. Optimization</strong></td>
+                        <td>5 min</td>
+                        <td>Choose and implement one optimization</td>
+                        <td>Compression, summarization, allocation</td>
+                    </tr>
+                    <tr>
+                        <td><strong>5. Evaluation</strong></td>
+                        <td>Auto</td>
+                        <td>Run verify.py for grading</td>
+                        <td>Validation, metrics comparison</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>Interactive Elements</h3>
+            <ul>
+                <li><strong>Code Implementation:</strong> Fill in TODO sections with your code</li>
+                <li><strong>Experiments:</strong> Run and compare different strategies</li>
+                <li><strong>Metrics Tracking:</strong> Automated measurement of your implementations</li>
+                <li><strong>Hints System:</strong> Progressive hints if you get stuck</li>
+                <li><strong>Visualizations:</strong> Charts comparing strategy performance</li>
+            </ul>
+        </section>
+
+        <!-- SECTION 6: EVALUATION -->
+        <section id="evaluation">
+            <h2>✅ Evaluation & Grading</h2>
+
+            <h3>How Grading Works</h3>
+            <p>After completing the notebook, run the auto-grader:</p>
+            <div class="code-block"><code>python src/verify.py</code></div>
+
+            <h3>What Gets Checked</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Check</th>
+                        <th>Requirement</th>
+                        <th>Points</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Token Calculations</td>
+                        <td>Within ±5% of expected values</td>
+                        <td>20%</td>
+                    </tr>
+                    <tr>
+                        <td>Naive Implementation</td>
+                        <td>Function works, metrics recorded</td>
+                        <td>20%</td>
+                    </tr>
+                    <tr>
+                        <td>Strategic Placement (3)</td>
+                        <td>All three strategies implemented</td>
+                        <td>30%</td>
+                    </tr>
+                    <tr>
+                        <td>Optimization</td>
+                        <td>≥10% accuracy OR ≥20% token reduction</td>
+                        <td>20%</td>
+                    </tr>
+                    <tr>
+                        <td>Metrics Comparison</td>
+                        <td>All data recorded properly</td>
+                        <td>10%</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>Passing Criteria</h3>
+            <div class="info-box success">
+                <strong>✅ To Pass:</strong>
+                <ul style="margin: 10px 0 0 20px;">
+                    <li>All 5 checks must pass</li>
+                    <li>Total score ≥ 80%</li>
+                    <li>At least one optimization shows measurable improvement</li>
+                </ul>
+            </div>
+
+            <h3>Output</h3>
+            <p>Results are saved to: <code>progress/lesson_progress.json</code></p>
+            <p>This JSON file contains:</p>
+            <ul>
+                <li>Your completion status for each task</li>
+                <li>Accuracy metrics for all strategies</li>
+                <li>Comparison data and improvements</li>
+                <li>Overall PASS/FAIL grade</li>
+                <li>Timestamp and completion time</li>
+            </ul>
+        </section>
+
+        <!-- SECTION 7: TROUBLESHOOTING -->
+        <section id="troubleshooting">
+            <h2>🔧 Troubleshooting</h2>
+
+            <h3>Common Issues & Solutions</h3>
+
+            <h4>Issue: "Python 3.12 not found"</h4>
+            <div class="info-box danger">
+                <strong>Error:</strong> <code>python3.12: command not found</code>
+                <br><br>
+                <strong>Solution:</strong> Install Python 3.12 from python.org or your package manager:
+                <div class="code-block" style="margin-top: 10px;"><code># Ubuntu/Debian
+sudo apt install python3.12
+
+# MacOS (using Homebrew)
+brew install python@3.12
+
+# Windows: Download from python.org</code></div>
+            </div>
+
+            <h4>Issue: "No module named 'transformers'"</h4>
+            <div class="info-box danger">
+                <strong>Cause:</strong> Virtual environment not activated or dependencies not installed
+                <br><br>
+                <strong>Solution:</strong>
+                <div class="code-block" style="margin-top: 10px;"><code># Activate environment
+source .venv/bin/activate
+
+# Reinstall dependencies
+pip install -r requirements.txt</code></div>
+            </div>
+
+            <h4>Issue: Models downloading too slowly</h4>
+            <div class="info-box warning">
+                <strong>Solution:</strong> The models download from Hugging Face Hub. If slow:
+                <ul style="margin: 10px 0 0 20px;">
+                    <li>Be patient - it's a one-time 6.6 GB download</li>
+                    <li>Try a different network connection</li>
+                    <li>Download manually and place in <code>~/.cache/huggingface/</code></li>
+                </ul>
+            </div>
+
+            <h4>Issue: Out of memory during inference</h4>
+            <div class="info-box warning">
+                <strong>Cause:</strong> System has less than 8 GB RAM
+                <br><br>
+                <strong>Solutions:</strong>
+                <ul style="margin: 10px 0 0 20px;">
+                    <li>Close other applications</li>
+                    <li>Reduce batch size in notebook (set <code>batch_size=1</code>)</li>
+                    <li>Use CPU instead of GPU if GPU memory is limited</li>
+                </ul>
+            </div>
+
+            <h4>Issue: Jupyter kernel not found</h4>
+            <div class="info-box danger">
+                <strong>Solution:</strong> Install ipykernel and register it:
+                <div class="code-block" style="margin-top: 10px;"><code>pip install ipykernel
+python -m ipykernel install --user --name=context_eng</code></div>
+            </div>
+
+            <h4>Issue: verify.py fails with import errors</h4>
+            <div class="info-box danger">
+                <strong>Cause:</strong> Running from wrong directory or venv not activated
+                <br><br>
+                <strong>Solution:</strong>
+                <div class="code-block" style="margin-top: 10px;"><code># Make sure you're in project root
+cd /path/to/VG_[Name]_[Date]
+
+# Activate venv
+source .venv/bin/activate
+
+# Run from project root
+python src/verify.py</code></div>
+            </div>
+
+            <h3>Still Having Issues?</h3>
+            <p>If problems persist:</p>
+            <ol>
+                <li>Check that Python 3.12 is truly installed: <code>python3.12 --version</code></li>
+                <li>Verify virtual environment is activated (look for <code>(.venv)</code> in prompt)</li>
+                <li>Try deleting <code>.venv</code> and running setup again</li>
+                <li>Ensure you have at least 10 GB free disk space</li>
+                <li>Check system RAM (need at least 8 GB)</li>
+            </ol>
+        </section>
+
+        <!-- SECTION 8: EXPECTED OUTCOMES -->
+        <section id="outcomes">
+            <h2>📊 Expected Learning Outcomes</h2>
+
+            <h3>Skills You'll Master</h3>
+            <ul>
+                <li>Calculate token budgets for any context window size</li>
+                <li>Implement strategic context placement algorithms</li>
+                <li>Measure and compare context engineering approaches quantitatively</li>
+                <li>Apply optimization techniques to reduce costs and improve quality</li>
+                <li>Understand trade-offs between different context strategies</li>
+            </ul>
+
+            <h3>Expected Performance Results</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Strategy</th>
+                        <th>Expected Accuracy</th>
+                        <th>Improvement vs Baseline</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Naive (Baseline)</td>
+                        <td>65-72%</td>
+                        <td>-</td>
+                    </tr>
+                    <tr>
+                        <td>Primacy</td>
+                        <td>70-77%</td>
+                        <td>+5-8%</td>
+                    </tr>
+                    <tr>
+                        <td>Recency</td>
+                        <td>75-82%</td>
+                        <td>+10-15%</td>
+                    </tr>
+                    <tr>
+                        <td>Sandwich</td>
+                        <td>78-85%</td>
+                        <td>+15-20%</td>
+                    </tr>
+                    <tr>
+                        <td>Optimized</td>
+                        <td>80-88%</td>
+                        <td>+20-25%</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <p>
+                <em>Note: Actual results may vary based on hardware and model loading time,
+                but relative improvements should be consistent.</em>
+            </p>
+
+            <h3>Real-World Applications</h3>
+            <p>After this lesson, you'll be able to apply context engineering to:</p>
+            <ul>
+                <li><strong>RAG Systems:</strong> Optimize document retrieval and context assembly</li>
+                <li><strong>Chatbots:</strong> Manage conversation history efficiently</li>
+                <li><strong>Document Q&A:</strong> Handle long documents within token limits</li>
+                <li><strong>Production LLMs:</strong> Reduce costs while maintaining quality</li>
+            </ul>
+        </section>
+
+        <!-- SECTION 9: ADDITIONAL RESOURCES -->
+        <section id="resources">
+            <h2>📚 Additional Resources</h2>
+
+            <h3>Research Papers</h3>
+            <ul>
+                <li>
+                    <strong>"Lost in the Middle"</strong> - Liu et al., 2023
+                    <br><a href="https://arxiv.org/abs/2307.03172" target="_blank">https://arxiv.org/abs/2307.03172</a>
+                </li>
+                <li>
+                    <strong>"Extending Context Window of Large Language Models"</strong>
+                    <br>Overview of techniques for context management
+                </li>
+            </ul>
+
+            <h3>Documentation</h3>
+            <ul>
+                <li>
+                    <strong>Hugging Face Transformers:</strong>
+                    <a href="https://huggingface.co/docs/transformers" target="_blank">Documentation</a>
+                </li>
+                <li>
+                    <strong>Qwen2.5 Model Card:</strong>
+                    <a href="https://huggingface.co/Qwen/Qwen2.5-3B-Instruct" target="_blank">Model Details</a>
+                </li>
+                <li>
+                    <strong>Sentence Transformers:</strong>
+                    <a href="https://www.sbert.net/" target="_blank">Official Docs</a>
+                </li>
+            </ul>
+
+            <h3>Further Learning</h3>
+            <ul>
+                <li>Anthropic's Prompt Engineering Guide</li>
+                <li>OpenAI's Context Window Best Practices</li>
+                <li>LangChain documentation on context management</li>
+            </ul>
+        </section>
+
+        <!-- SECTION 10: LICENSE -->
+        <section id="license">
+            <h2>📜 License & Attribution</h2>
+
+            <p>
+                <strong>Lesson Content:</strong> Licensed under Apache 2.0
+                <br>You are free to use, modify, and distribute this lesson with attribution.
+            </p>
+
+            <p>
+                <strong>Models Used:</strong>
+            </p>
+            <ul>
+                <li>Qwen2.5-3B-Instruct: Apache 2.0 (Alibaba Cloud)</li>
+                <li>all-MiniLM-L6-v2: Apache 2.0 (Sentence Transformers)</li>
+            </ul>
+
+            <p>See <code>DATA_LICENSES.md</code> for complete third-party license information.</p>
+        </section>
+
+        <!-- FOOTER -->
+        <div class="footer">
+            <p><strong>Context Engineering Interactive Micro-Lesson</strong></p>
+            <p>Version 1.0 | Apache 2.0 License | 2025</p>
+            <p>🎓 Built for AI Engineering students</p>
+        </div>
+    </div>
+</body>
+</html>
