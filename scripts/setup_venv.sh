@@ -189,5 +189,5 @@ else
 fi
 echo ""
 echo "   OR manually:"
-echo "   jupyter notebook notebooks/context_engineering_lesson.ipynb"
+echo "   python -m notebook notebooks/context_engineering_lesson.ipynb"
 echo ""

@@ -455,7 +455,7 @@ print(f"✅ Notebook has {len(nb['cells'])} cells (expecting ~25)")
 EOF
 
 # Try opening (don't run yet)
-# jupyter notebook notebooks/context_engineering_lesson.ipynb
+# python -m notebook notebooks/context_engineering_lesson.ipynb
 ```
 
 **Expected:** Notebook exists, is valid JSON, has ~25 cells.
@@ -515,7 +515,7 @@ print(f"✅ Complete notebook has {len(nb['cells'])} cells (expecting 40-48)")
 EOF
 
 # Test opening notebook
-jupyter notebook notebooks/context_engineering_lesson.ipynb &
+python -m notebook notebooks/context_engineering_lesson.ipynb &
 sleep 3
 pkill -f jupyter
 echo "✅ Notebook opens successfully"

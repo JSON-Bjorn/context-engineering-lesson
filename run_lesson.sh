@@ -53,8 +53,13 @@ fi
 # Activate virtual environment
 echo ""
 echo "Activating virtual environment..."
-source .venv/bin/activate
-if [ $? -ne 0 ]; then
+if [ -f ".venv/Scripts/activate" ]; then
+    # Windows (Git Bash) virtualenv layout
+    source .venv/Scripts/activate
+elif [ -f ".venv/bin/activate" ]; then
+    # POSIX virtualenv layout
+    source .venv/bin/activate
+else
     echo "❌ Error: Failed to activate virtual environment"
     echo "Try running: bash scripts/setup_venv.sh"
     exit 1
@@ -118,7 +123,7 @@ echo "=================================="
 echo ""
 
 # Launch Jupyter and wait
-jupyter notebook notebooks/context_engineering_lesson.ipynb
+python -m notebook notebooks/context_engineering_lesson.ipynb
 
 # On Jupyter close
 echo ""

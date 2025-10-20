@@ -562,7 +562,7 @@ python -c "import transformers; import torch; print('✅ Dependencies OK')"
 python -c "from src.helpers import load_documents; docs = load_documents('data/source_documents.json'); print(f'✅ Loaded {len(docs)} documents')"
 
 # Open notebook (don't run all cells, just verify it loads)
-jupyter notebook notebooks/context_engineering_lesson.ipynb
+python -m notebook notebooks/context_engineering_lesson.ipynb
 
 # Test verify script (should fail initially)
 python src/verify.py

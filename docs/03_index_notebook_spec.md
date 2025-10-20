@@ -443,7 +443,7 @@ chmod +x run_lesson.sh
 source .venv/bin/activate  # or .venv\Scripts\activate on Windows
 
 # Start Jupyter
-jupyter notebook notebooks/context_engineering_lesson.ipynb</code></div>
+python -m notebook notebooks/context_engineering_lesson.ipynb</code></div>
 
             <h3>What to Expect</h3>
             <ol>

@@ -228,6 +228,6 @@ echo 1. Activate the environment:
 echo    .venv\Scripts\activate.bat
 echo.
 echo 2. Start the lesson:
-echo    jupyter notebook notebooks\context_engineering_lesson.ipynb
+echo    python -m notebook notebooks\context_engineering_lesson.ipynb
 echo.
 pause
