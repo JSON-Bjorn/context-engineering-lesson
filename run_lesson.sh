@@ -1,5 +1,4 @@
 #!/bin/bash
-set -e  # Exit on error
 
 # Welcome banner
 echo ""
@@ -18,80 +17,33 @@ echo ""
 echo "=================================="
 echo ""
 
-# Check for Python 3.12
-echo "Checking prerequisites..."
-if command -v python3.12 &> /dev/null; then
-    PYTHON_CMD="python3.12"
-    echo "✅ Python 3.12 found"
-elif command -v python3 &> /dev/null; then
-    VERSION=$(python3 --version 2>&1 | grep -oP '3\.\d+')
-    if [ "$VERSION" = "3.12" ]; then
-        PYTHON_CMD="python3"
-        echo "✅ Python 3.12 found"
-    else
-        echo "❌ Error: Python 3.12 required, found Python $VERSION"
-        echo "Please install Python 3.12 from https://www.python.org/downloads/"
-        exit 1
-    fi
-else
-    echo "❌ Error: Python 3.12 not found"
-    echo "Please install Python 3.12 from https://www.python.org/downloads/"
-    exit 1
-fi
-
-# Check/create virtual environment
+# Quick check for virtual environment
 if [ ! -d ".venv" ]; then
+    echo "⚠️  Virtual environment not found!"
     echo ""
-    echo "Virtual environment not found. Setting up now..."
-    bash scripts/setup_venv.sh
-    if [ $? -ne 0 ]; then
-        echo "❌ Setup failed. Please check errors above."
-        exit 1
-    fi
-fi
-
-# Activate virtual environment
-echo ""
-echo "Activating virtual environment..."
-if [ -f ".venv/Scripts/activate" ]; then
-    # Windows (Git Bash) virtualenv layout
-    source .venv/Scripts/activate
-elif [ -f ".venv/bin/activate" ]; then
-    # POSIX virtualenv layout
-    source .venv/bin/activate
-else
-    echo "❌ Error: Failed to activate virtual environment"
-    echo "Try running: bash scripts/setup_venv.sh"
+    echo "Please run the setup script first:"
+    echo "  bash scripts/setup_venv.sh    # Linux/Mac"
+    echo "  scripts\\setup_venv.bat        # Windows"
+    echo ""
     exit 1
 fi
-echo "✅ Virtual environment activated"
 
-# Verify dependencies
+echo "✅ Virtual environment found"
 echo ""
-echo "Verifying dependencies..."
-python -c "import transformers; import torch; import jupyter" 2>&1
-if [ $? -ne 0 ]; then
-    echo "❌ Error: Dependencies not installed correctly"
-    echo "Installing dependencies now..."
-    pip install -r requirements.txt
-    if [ $? -ne 0 ]; then
-        echo "❌ Installation failed. Please run: bash scripts/setup_venv.sh"
-        exit 1
-    fi
-fi
-echo "✅ Dependencies verified"
 
-# Create progress directory
-echo ""
-echo "Preparing lesson environment..."
-mkdir -p progress
-echo "✅ Progress tracking ready"
+# Create progress directory if needed
+mkdir -p progress 2>/dev/null
 
 # Display lesson info
 echo ""
 echo "=================================="
-echo "LESSON OVERVIEW"
+echo "🎓 READY TO START THE LESSON"
 echo "=================================="
+echo ""
+echo "The virtual environment is ready!"
+echo ""
+echo "📚 LESSON OVERVIEW"
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo ""
 echo "You will learn:"
 echo "  1. Token counting and budget management"
@@ -108,39 +60,52 @@ echo "  • Achieve 15-25% accuracy improvement"
 echo "  • Reduce token usage by 20-30%"
 echo ""
 echo "=================================="
-echo ""
-
-# Launch Jupyter
-echo "Starting Jupyter Notebook..."
-echo ""
-echo "The lesson will open in your browser shortly."
-echo "If it doesn't, look for the URL in the output below."
-echo ""
-echo "⚠️  IMPORTANT: Keep this terminal window open!"
-echo "    Press Ctrl+C when you're done to stop Jupyter."
-echo ""
+echo "📖 HOW TO START"
 echo "=================================="
 echo ""
-
-# Launch Jupyter and wait
-python -m notebook notebooks/context_engineering_lesson.ipynb
-
-# On Jupyter close
+echo "1. Open the notebook in your preferred IDE:"
+echo ""
+echo "   📁 File: notebooks/context_engineering_lesson.ipynb"
+echo ""
+echo "2. Select the Python kernel from your virtual environment:"
+echo ""
+if [ -f ".venv/Scripts/activate" ]; then
+    echo "   🐍 Windows: .venv\\Scripts\\python.exe"
+else
+    echo "   🐍 Linux/Mac: .venv/bin/python"
+fi
+echo ""
+echo "   How to select the kernel:"
+echo "   • VS Code: Click the kernel selector in the top-right corner"
+echo "   • PyCharm: Go to Settings → Project → Python Interpreter"
+echo "   • JupyterLab: Menu → Kernel → Change Kernel"
+echo "   • Jupyter Notebook: Kernel → Change kernel"
+echo ""
+echo "3. Verify you're using the correct environment:"
+echo ""
+echo "   Run this in the first cell of the notebook:"
+echo ""
+echo "   ┌─────────────────────────────────────┐"
+echo "   │ import sys                          │"
+echo "   │ print(sys.executable)               │"
+echo "   └─────────────────────────────────────┘"
+echo ""
+echo "   Expected output should contain '.venv'"
+echo ""
+echo "4. Work through the lesson cells sequentially"
+echo "   (use Shift+Enter to run each cell)"
 echo ""
 echo "=================================="
-echo "Lesson Session Ended"
+echo "✅ AFTER COMPLETING THE LESSON"
 echo "=================================="
 echo ""
-echo "Next steps:"
-echo ""
-echo "1. If you completed the lesson exercises, verify your work:"
+echo "Verify your work with the auto-grader:"
 echo "   python src/verify.py"
 echo ""
-echo "2. Your progress is saved in:"
+echo "Your progress is saved in:"
 echo "   progress/lesson_progress.json"
 echo ""
-echo "3. To restart the lesson later:"
-echo "   ./run_lesson.sh"
+echo "=================================="
 echo ""
-echo "Happy learning! 🚀"
+echo "🚀 Happy learning!"
 echo ""

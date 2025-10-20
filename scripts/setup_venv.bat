@@ -224,10 +224,25 @@ echo Setup Complete!
 echo ==================================
 echo.
 echo Next steps:
-echo 1. Activate the environment:
-echo    .venv\Scripts\activate.bat
 echo.
-echo 2. Start the lesson:
-echo    python -m notebook notebooks\context_engineering_lesson.ipynb
+echo 1. Open the notebook in your IDE:
+echo    File: notebooks\context_engineering_lesson.ipynb
+echo.
+echo 2. Select the Python kernel from .venv:
+echo    Kernel: .venv\Scripts\python.exe
+echo.
+echo    In VS Code: Click kernel selector in top-right
+echo    In PyCharm: Settings -^> Project -^> Python Interpreter
+echo    In JupyterLab: Kernel -^> Change Kernel
+echo.
+echo 3. Verify the correct environment (run in first cell):
+echo    import sys
+echo    print(sys.executable)
+echo.
+echo    Should show path to .venv\Scripts\python.exe
+echo.
+echo 4. Start working through the lesson cells!
+echo.
+echo Tip: Your virtual environment is ready at .venv\Scripts\activate.bat
 echo.
 pause

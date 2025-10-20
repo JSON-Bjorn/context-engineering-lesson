@@ -13,16 +13,28 @@ bash scripts/setup_venv.sh
 
 # Or for Windows:
 scripts\setup_venv.bat
-
-# 3. Activate the environment
-source .venv/bin/activate  # Linux/Mac
-# Or: .venv\Scripts\activate  # Windows
-
-# 4. Start the lesson
-bash run_lesson.sh
 ```
 
-**First time?** Open `index.html` in a web browser for detailed setup instructions.
+**Next Steps:**
+
+1. **Open the notebook** in your IDE:
+   - File: `notebooks/context_engineering_lesson.ipynb`
+
+2. **Select the Python kernel** from `.venv`:
+   - Linux/Mac: `.venv/bin/python`
+   - Windows: `.venv\Scripts\python.exe`
+
+3. **Verify your environment** (run in first cell):
+   ```python
+   import sys
+   print(sys.executable)  # Should show path containing .venv
+   ```
+
+4. **Start working** through the lesson cells!
+
+**Supported IDEs:** VS Code, PyCharm, JupyterLab, Jupyter Notebook
+
+**Need detailed instructions?** Open `index.html` in a web browser for the complete setup guide.
 
 ## Learning Objectives
 

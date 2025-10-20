@@ -402,36 +402,92 @@ python -c "import transformers; import torch; print('✅ Setup successful!')"</c
         <section id="running">
             <h2>▶️ Running the Lesson</h2>
 
-            <h3>Quick Start (Recommended)</h3>
-            <div class="code-block"><code># Make entrypoint executable
-chmod +x run_lesson.sh
+            <h3>Step 1: Open the Notebook in Your IDE</h3>
+            <p>Navigate to and open the following file in your preferred development environment:</p>
+            <div class="code-block"><code>notebooks/context_engineering_lesson.ipynb</code></div>
 
-# Run the lesson
-./run_lesson.sh</code></div>
-
-            <p>This script will:</p>
+            <p><strong>Supported IDEs:</strong></p>
             <ul>
-                <li>✅ Check all prerequisites</li>
-                <li>✅ Activate the virtual environment</li>
-                <li>✅ Verify dependencies</li>
-                <li>✅ Launch Jupyter Notebook</li>
+                <li><strong>VS Code:</strong> Install the Jupyter extension, then open the .ipynb file</li>
+                <li><strong>PyCharm Professional:</strong> Built-in Jupyter support, just open the file</li>
+                <li><strong>JupyterLab:</strong> Start with <code>jupyter lab</code> then navigate to the notebook</li>
+                <li><strong>Jupyter Notebook:</strong> Start with <code>jupyter notebook</code> then open the file</li>
             </ul>
 
-            <h3>Manual Start (Alternative)</h3>
-            <div class="code-block"><code># Activate environment
-source .venv/bin/activate  # or .venv\Scripts\activate on Windows
+            <h3>Step 2: Select the Correct Python Kernel</h3>
+            <p>This is the most critical step! You must select the Python interpreter from your virtual environment:</p>
 
-# Start Jupyter
-python -m notebook notebooks/context_engineering_lesson.ipynb</code></div>
+            <h4>Kernel Path:</h4>
+            <ul>
+                <li><strong>Linux/Mac:</strong> <code>.venv/bin/python</code></li>
+                <li><strong>Windows:</strong> <code>.venv\Scripts\python.exe</code></li>
+            </ul>
 
-            <h3>What to Expect</h3>
+            <h4>How to Select Kernel by IDE:</h4>
+            <table>
+                <tr>
+                    <th>IDE</th>
+                    <th>How to Select Kernel</th>
+                </tr>
+                <tr>
+                    <td>VS Code</td>
+                    <td>Click the kernel selector button in the top-right corner of the notebook</td>
+                </tr>
+                <tr>
+                    <td>PyCharm</td>
+                    <td>Go to Settings → Project → Python Interpreter, select .venv</td>
+                </tr>
+                <tr>
+                    <td>JupyterLab</td>
+                    <td>Menu → Kernel → Change Kernel → Select .venv</td>
+                </tr>
+                <tr>
+                    <td>Jupyter Notebook</td>
+                    <td>Kernel menu → Change kernel → Select .venv</td>
+                </tr>
+            </table>
+
+            <div class="info-box warning">
+                <strong>⚠️ Kernel Selection is Critical</strong>
+                If you select the wrong kernel, the lesson will not work! All dependencies are installed
+                in the virtual environment (.venv), so you must use that specific Python interpreter.
+            </div>
+
+            <h3>Step 3: Verify Your Environment</h3>
+            <p>Before starting the lesson, run this code in the first cell to verify you're using the correct environment:</p>
+            <div class="code-block"><code>import sys
+print(sys.executable)</code></div>
+            <p>
+                The output should show a path containing <code>.venv</code>. For example:
+            </p>
+            <ul>
+                <li><code>/path/to/context-engineering-lesson/.venv/bin/python</code></li>
+                <li><code>C:\path\to\context-engineering-lesson\.venv\Scripts\python.exe</code></li>
+            </ul>
+
+            <div class="info-box success">
+                <strong>✅ Environment Verified!</strong>
+                If you see <code>.venv</code> in the path, you're all set! If not, go back to Step 2
+                and select the correct kernel.
+            </div>
+
+            <h3>Step 4: Work Through the Lesson</h3>
             <ol>
-                <li>Jupyter will open in your default web browser</li>
-                <li>The lesson notebook will load automatically</li>
-                <li>Follow the instructions in each cell</li>
-                <li>Run cells sequentially (Shift+Enter)</li>
-                <li>Complete all TODO sections</li>
+                <li>Read the instructions in each cell carefully</li>
+                <li>Run cells sequentially using Shift+Enter</li>
+                <li>Complete all TODO sections with your implementations</li>
+                <li>Observe the output and metrics after each phase</li>
+                <li>Don't skip ahead - each phase builds on the previous</li>
             </ol>
+
+            <h3>Quick Verification Script (Optional)</h3>
+            <p>If you want to see detailed instructions and verify your setup, you can run:</p>
+            <div class="code-block"><code># Make script executable (Linux/Mac)
+chmod +x run_lesson.sh
+
+# Run verification script
+./run_lesson.sh</code></div>
+            <p>This script checks prerequisites and displays detailed instructions, but does NOT auto-launch Jupyter.</p>
 
             <div class="info-box">
                 <strong>💡 First Run Takes Longer</strong>
