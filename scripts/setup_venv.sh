@@ -3,29 +3,121 @@ set -e  # Exit on error
 
 echo "=================================="
 echo "Context Engineering Lesson Setup"
-echo "Linux/Mac Virtual Environment"
+echo "Linux/Mac/Windows (Git Bash) Setup"
 echo "=================================="
 echo ""
 
-# Check for Python 3.12
-echo "Checking for Python 3.12..."
-if command -v python3.12 &> /dev/null; then
-    PYTHON_CMD="python3.12"
-    echo "✅ Found python3.12"
-elif command -v python3 &> /dev/null; then
-    VERSION=$(python3 --version 2>&1 | grep -oP '3\.\d+')
-    if [ "$VERSION" = "3.12" ]; then
-        PYTHON_CMD="python3"
-        echo "✅ Found python3 (version 3.12)"
-    else
-        echo "❌ Error: Python 3.12 required, found Python $VERSION"
-        exit 1
+# Function to check if a command is a valid Python 3.12.x
+check_python_version() {
+    local cmd=$1
+    if command -v "$cmd" &> /dev/null; then
+        local version=$("$cmd" --version 2>&1 | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' | head -1)
+        if [[ "$version" =~ ^3\.12\. ]]; then
+            echo "$cmd"
+            return 0
+        fi
     fi
-else
-    echo "❌ Error: Python 3.12 not found"
-    echo "Please install Python 3.12 from https://www.python.org/downloads/"
+    return 1
+}
+
+# Function to print installation instructions
+print_install_instructions() {
+    echo ""
+    echo "╔════════════════════════════════════════════════════════════════╗"
+    echo "║  Python 3.12.x Not Found - Installation Required              ║"
+    echo "╚════════════════════════════════════════════════════════════════╝"
+    echo ""
+    echo "Please install Python 3.12.x from:"
+    echo "  🔗 https://www.python.org/downloads/"
+    echo ""
+    echo "Platform-specific instructions:"
+    echo ""
+    echo "📦 Linux (Ubuntu/Debian):"
+    echo "  sudo apt update"
+    echo "  sudo apt install python3.12 python3.12-venv"
+    echo ""
+    echo "📦 Linux (Fedora/RHEL):"
+    echo "  sudo dnf install python3.12"
+    echo ""
+    echo "🍺 macOS (Homebrew):"
+    echo "  brew install python@3.12"
+    echo ""
+    echo "🪟 Windows:"
+    echo "  1. Download from https://www.python.org/downloads/"
+    echo "  2. Run installer"
+    echo "  3. ✅ Check 'Add Python to PATH'"
+    echo "  4. ✅ Check 'Install for all users' (optional)"
+    echo ""
+    echo "After installation, restart your terminal and run this script again."
+    echo ""
+}
+
+# Check for Python 3.12
+echo "Searching for Python 3.12.x..."
+
+PYTHON_CMD=""
+
+# Method 1: Check python3.12 command
+if [ -z "$PYTHON_CMD" ]; then
+    if PYTHON_CMD=$(check_python_version "python3.12"); then
+        echo "✅ Found python3.12 ($(python3.12 --version 2>&1))"
+    fi
+fi
+
+# Method 2: Check python3 command
+if [ -z "$PYTHON_CMD" ]; then
+    if PYTHON_CMD=$(check_python_version "python3"); then
+        echo "✅ Found python3 ($(python3 --version 2>&1))"
+    fi
+fi
+
+# Method 3: Check python command
+if [ -z "$PYTHON_CMD" ]; then
+    if PYTHON_CMD=$(check_python_version "python"); then
+        echo "✅ Found python ($(python --version 2>&1))"
+    fi
+fi
+
+# Method 4: Check common Windows paths (for Git Bash on Windows)
+if [ -z "$PYTHON_CMD" ]; then
+    # Build array with proper escaping for paths with spaces/parentheses
+    WINDOWS_PATHS=()
+    WINDOWS_PATHS+=("/c/Python312/python.exe")
+
+    # Check for LOCALAPPDATA and APPDATA paths if on Windows
+    if [ -n "$LOCALAPPDATA" ]; then
+        WINDOWS_PATHS+=("$LOCALAPPDATA/Programs/Python/Python312/python.exe")
+    fi
+    if [ -n "$APPDATA" ]; then
+        WINDOWS_PATHS+=("$APPDATA/Python/Python312/python.exe")
+    fi
+
+    # Add Program Files paths (Git Bash translates these automatically)
+    WINDOWS_PATHS+=("/c/Program Files/Python312/python.exe")
+    WINDOWS_PATHS+=("/c/Program Files (x86)/Python312/python.exe")
+
+    for py_path in "${WINDOWS_PATHS[@]}"; do
+        if [ -f "$py_path" ]; then
+            if PYTHON_CMD=$(check_python_version "$py_path"); then
+                echo "✅ Found Python at $py_path ($("$py_path" --version 2>&1))"
+                break
+            fi
+        fi
+    done
+fi
+
+# If still not found, error out with instructions
+if [ -z "$PYTHON_CMD" ]; then
+    echo "❌ Error: Python 3.12.x not found"
+    print_install_instructions
     exit 1
 fi
+
+# Verify the Python version one more time
+FULL_VERSION=$($PYTHON_CMD --version 2>&1 | grep -oE '[0-9]+\.[0-9]+\.[0-9]+')
+echo ""
+echo "Using Python $FULL_VERSION at: $(command -v $PYTHON_CMD || echo $PYTHON_CMD)"
+echo ""
 
 # Create virtual environment
 echo ""
@@ -41,13 +133,21 @@ echo "✅ Virtual environment created"
 # Activate virtual environment
 echo ""
 echo "Activating virtual environment..."
-source .venv/bin/activate
+# Windows (Git Bash) uses Scripts instead of bin
+if [ -f ".venv/Scripts/activate" ]; then
+    source .venv/Scripts/activate
+elif [ -f ".venv/bin/activate" ]; then
+    source .venv/bin/activate
+else
+    echo "❌ Error: Could not find activation script"
+    exit 1
+fi
 echo "✅ Virtual environment activated"
 
 # Upgrade pip
 echo ""
 echo "Upgrading pip..."
-pip install --upgrade pip --quiet
+"$PYTHON_CMD" -m pip install --upgrade pip --quiet
 echo "✅ pip upgraded"
 
 # Install dependencies
@@ -59,7 +159,7 @@ echo "✅ Dependencies installed"
 # Verify installation
 echo ""
 echo "Verifying installation..."
-python -c "import transformers; import torch; import sentence_transformers" 2>&1
+"$PYTHON_CMD" -c "import transformers; import torch; import sentence_transformers" 2>&1
 if [ $? -eq 0 ]; then
     echo "✅ All critical packages installed successfully"
 else
@@ -75,10 +175,18 @@ echo "=================================="
 echo ""
 echo "Next steps:"
 echo "1. Activate the environment:"
-echo "   source .venv/bin/activate"
+if [ -f ".venv/Scripts/activate" ]; then
+    echo "   source .venv/Scripts/activate"
+else
+    echo "   source .venv/bin/activate"
+fi
 echo ""
 echo "2. Start the lesson:"
-echo "   ./run_lesson.sh"
+if [ -f "run_lesson.sh" ]; then
+    echo "   ./run_lesson.sh"
+else
+    echo "   bash scripts/run_lesson.sh"
+fi
 echo ""
 echo "   OR manually:"
 echo "   jupyter notebook notebooks/context_engineering_lesson.ipynb"
