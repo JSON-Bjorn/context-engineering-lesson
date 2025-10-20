@@ -6,7 +6,7 @@ A comprehensive, self-contained, interactive lesson on Context Engineering for L
 
 ```bash
 # 1. Clone the repository
-git clone <repository-url>
+git clone https://github.com/JSON-Bjorn/context-engineering-lesson
 cd context-engineering-lesson/
 
 # 2. Set up the virtual environment
