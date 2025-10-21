@@ -150,17 +150,58 @@ echo "Upgrading pip..."
 "$PYTHON_CMD" -m pip install --upgrade pip --quiet
 echo "✅ pip upgraded"
 
-# Install dependencies
+# Detect GPU and install correct PyTorch version
 echo ""
-echo "Installing dependencies (this may take 3-5 minutes)..."
+echo "=================================="
+echo "Detecting GPU Hardware..."
+echo "=================================="
+echo ""
+"$PYTHON_CMD" scripts/detect_gpu.py
+if [ $? -ne 0 ]; then
+    echo "❌ Error: GPU detection failed"
+    exit 1
+fi
+echo ""
+
+# Read GPU config and install PyTorch
+echo "Installing PyTorch optimized for your hardware..."
+PYTORCH_CMD=$("$PYTHON_CMD" -c "import json; config = json.load(open('.gpu_config.json')); print(config['pytorch_command'])")
+echo "Command: $PYTORCH_CMD"
+echo ""
+eval $PYTORCH_CMD
+if [ $? -ne 0 ]; then
+    echo "❌ Error: PyTorch installation failed"
+    exit 1
+fi
+echo "✅ PyTorch installed successfully"
+echo ""
+
+# Install other dependencies (excluding torch)
+echo ""
+echo "Installing other dependencies (this may take 2-3 minutes)..."
 pip install -r requirements.txt
 echo "✅ Dependencies installed"
 
 # Verify installation
 echo ""
 echo "Verifying installation..."
-"$PYTHON_CMD" -c "import transformers; import torch; import sentence_transformers" 2>&1
+"$PYTHON_CMD" -c "
+import transformers
+import torch
+import sentence_transformers
+
+print('✅ PyTorch version:', torch.__version__)
+print('✅ Transformers version:', transformers.__version__)
+print('✅ CUDA available:', torch.cuda.is_available())
+if torch.cuda.is_available():
+    print('✅ GPU:', torch.cuda.get_device_name(0))
+elif hasattr(torch.backends, 'mps') and torch.backends.mps.is_available():
+    print('✅ GPU: Apple Silicon (MPS)')
+else:
+    print('⚠️  GPU: CPU-only mode')
+" 2>&1
 if [ $? -eq 0 ]; then
+    echo ""
     echo "✅ All critical packages installed successfully"
 else
     echo "❌ Error: Package verification failed"

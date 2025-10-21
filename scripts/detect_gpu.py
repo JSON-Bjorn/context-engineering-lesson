@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 """
 GPU Detection Script - Detects available GPU and determines correct PyTorch installation.
 
@@ -9,6 +10,13 @@ import subprocess
 import platform
 import sys
 import json
+import os
+
+# Fix Windows console encoding for Unicode
+if sys.platform == 'win32':
+    import codecs
+    sys.stdout = codecs.getwriter('utf-8')(sys.stdout.buffer, 'strict')
+    sys.stderr = codecs.getwriter('utf-8')(sys.stderr.buffer, 'strict')
 
 def detect_nvidia_gpu():
     """
@@ -29,17 +37,25 @@ def detect_nvidia_gpu():
             gpu_name = lines[0].split(',')[0].strip()
             driver_version = lines[0].split(',')[1].strip()
 
-            # Get CUDA version
-            cuda_result = subprocess.run(
-                ['nvidia-smi', '--query-gpu=cuda_version', '--format=csv,noheader'],
-                capture_output=True,
-                text=True,
-                timeout=5
-            )
-
+            # Get CUDA version from nvidia-smi output
+            # Method 1: Try to get from nvidia-smi general output
             cuda_version = None
-            if cuda_result.returncode == 0:
-                cuda_version = cuda_result.stdout.strip().split('\n')[0].strip()
+            try:
+                cuda_result = subprocess.run(
+                    ['nvidia-smi'],
+                    capture_output=True,
+                    text=True,
+                    timeout=5
+                )
+
+                if cuda_result.returncode == 0:
+                    # Parse CUDA version from output like "CUDA Version: 12.8"
+                    for line in cuda_result.stdout.split('\n'):
+                        if 'CUDA Version:' in line:
+                            cuda_version = line.split('CUDA Version:')[1].strip().split()[0]
+                            break
+            except:
+                pass
 
             return True, gpu_name, cuda_version
     except (FileNotFoundError, subprocess.TimeoutExpired, Exception):
@@ -119,48 +135,66 @@ def get_pytorch_install_command(gpu_info):
 
         # Determine CUDA version for PyTorch
         if cuda_version:
-            cuda_major = cuda_version.split('.')[0]
+            try:
+                cuda_major = int(cuda_version.split('.')[0])
+                cuda_minor = int(cuda_version.split('.')[1]) if '.' in cuda_version else 0
 
-            if cuda_major == '12':
-                torch_package = "torch==2.4.1+cu121"
-                index_url = "https://download.pytorch.org/whl/cu121"
-                desc = f"PyTorch with CUDA 12.1 support for {gpu_info['gpu_name']}"
-            elif cuda_major == '11':
-                torch_package = "torch==2.4.1+cu118"
-                index_url = "https://download.pytorch.org/whl/cu118"
-                desc = f"PyTorch with CUDA 11.8 support for {gpu_info['gpu_name']}"
-            else:
-                # Default to CUDA 12.1 for newer versions
-                torch_package = "torch==2.4.1+cu121"
-                index_url = "https://download.pytorch.org/whl/cu121"
-                desc = f"PyTorch with CUDA 12.1 support (detected CUDA {cuda_version})"
+                # Support for CUDA 12.x (12.1 through 12.8+)
+                if cuda_major == 12:
+                    # Use cu121 for CUDA 12.1-12.4, cu124 for CUDA 12.4+
+                    if cuda_minor >= 4:
+                        torch_package = "torch torchvision torchaudio"
+                        index_url = "https://download.pytorch.org/whl/cu124"
+                        desc = f"PyTorch with CUDA 12.4+ support for {gpu_info['gpu_name']} (CUDA {cuda_version})"
+                    else:
+                        torch_package = "torch torchvision torchaudio"
+                        index_url = "https://download.pytorch.org/whl/cu121"
+                        desc = f"PyTorch with CUDA 12.1 support for {gpu_info['gpu_name']} (CUDA {cuda_version})"
+
+                # Support for CUDA 11.x
+                elif cuda_major == 11:
+                    torch_package = "torch torchvision torchaudio"
+                    index_url = "https://download.pytorch.org/whl/cu118"
+                    desc = f"PyTorch with CUDA 11.8 support for {gpu_info['gpu_name']} (CUDA {cuda_version})"
+
+                # For future CUDA versions (13+), try latest CUDA 12 build
+                else:
+                    torch_package = "torch torchvision torchaudio"
+                    index_url = "https://download.pytorch.org/whl/cu124"
+                    desc = f"PyTorch with CUDA 12.4+ support for {gpu_info['gpu_name']} (detected CUDA {cuda_version})"
+
+            except (ValueError, IndexError):
+                # Fallback if version parsing fails
+                torch_package = "torch torchvision torchaudio"
+                index_url = "https://download.pytorch.org/whl/cu124"
+                desc = f"PyTorch with CUDA 12.4+ support for {gpu_info['gpu_name']}"
         else:
-            # No CUDA version detected, use CUDA 12.1 as default
-            torch_package = "torch==2.4.1+cu121"
-            index_url = "https://download.pytorch.org/whl/cu121"
-            desc = f"PyTorch with CUDA 12.1 support for {gpu_info['gpu_name']}"
+            # No CUDA version detected, use latest CUDA 12 build
+            torch_package = "torch torchvision torchaudio"
+            index_url = "https://download.pytorch.org/whl/cu124"
+            desc = f"PyTorch with CUDA 12.4+ support for {gpu_info['gpu_name']}"
 
         pip_cmd = f"pip install {torch_package} --index-url {index_url}"
         return pip_cmd, desc
 
     elif gpu_info['amd_gpu']:
-        # AMD ROCm support (Linux only)
-        torch_package = "torch==2.4.1+rocm6.0"
-        index_url = "https://download.pytorch.org/whl/rocm6.0"
-        desc = f"PyTorch with ROCm 6.0 support for {gpu_info['gpu_name']}"
+        # AMD ROCm support (Linux only) - use latest stable ROCm
+        torch_package = "torch torchvision torchaudio"
+        index_url = "https://download.pytorch.org/whl/rocm6.2"
+        desc = f"PyTorch with ROCm 6.2 support for {gpu_info['gpu_name']}"
         pip_cmd = f"pip install {torch_package} --index-url {index_url}"
         return pip_cmd, desc
 
     elif gpu_info['apple_silicon']:
         # Apple Silicon - use standard PyTorch (MPS support included)
-        torch_package = "torch==2.4.1"
+        torch_package = "torch torchvision torchaudio"
         desc = f"PyTorch with Metal Performance Shaders (MPS) for {gpu_info['chip_name']}"
         pip_cmd = f"pip install {torch_package}"
         return pip_cmd, desc
 
     else:
         # CPU only
-        torch_package = "torch==2.4.1"
+        torch_package = "torch torchvision torchaudio"
         desc = "PyTorch (CPU-only version)"
         pip_cmd = f"pip install {torch_package}"
         return pip_cmd, desc

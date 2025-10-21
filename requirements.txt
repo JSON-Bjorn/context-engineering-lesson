@@ -3,7 +3,8 @@
 
 # Core ML/LLM libraries
 transformers==4.45.2
-torch==2.4.1
+# NOTE: torch is installed by GPU detection script (scripts/detect_gpu.py)
+# to ensure correct CUDA/ROCm/MPS support for your hardware
 sentence-transformers==3.1.1
 accelerate==0.34.2
 

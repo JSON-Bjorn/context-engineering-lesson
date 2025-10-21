@@ -74,6 +74,21 @@ By completing this 30-minute interactive lesson, you will:
 
 **First run downloads:** ~6.6 GB of models (Qwen2.5-3B-Instruct + all-MiniLM-L6-v2)
 
+### GPU Acceleration (Optional but Recommended)
+
+The setup scripts **automatically detect your GPU** and install the optimal PyTorch version:
+
+- ✅ **NVIDIA GPUs**: Auto-detects CUDA version (11.8, 12.1, 12.4+, 12.8, etc.) and installs compatible PyTorch
+- ✅ **AMD GPUs**: Auto-detects ROCm support (Linux only) and installs ROCm-enabled PyTorch
+- ✅ **Apple Silicon**: Auto-detects M1/M2/M3 chips and enables Metal Performance Shaders (MPS)
+- ✅ **CPU-only**: Falls back to CPU version if no GPU detected
+
+**Performance difference:**
+- **With GPU**: ~5-10 seconds per evaluation → Total lesson time ~5-10 minutes
+- **CPU-only**: ~20-40 seconds per evaluation → Total lesson time ~15-25 minutes
+
+The setup is intelligent - just run the setup script and it will automatically configure PyTorch for your hardware!
+
 ## File Structure
 
 ```
@@ -86,8 +101,11 @@ By completing this 30-minute interactive lesson, you will:
 ├── requirements.txt                     # Pinned dependencies
 ├── .gitignore                           # Git ignore rules
 ├── scripts/
-│   ├── setup_venv.sh                    # Linux/Mac setup
-│   └── setup_venv.bat                   # Windows setup
+│   ├── setup_venv.sh                    # Linux/Mac setup (with GPU detection)
+│   ├── setup_venv.bat                   # Windows setup (with GPU detection)
+│   ├── setup_venv_smart.sh              # Advanced GPU-aware setup (alternative)
+│   ├── detect_gpu.py                    # Automatic GPU/CUDA/ROCm/MPS detection
+│   └── test_gpu_setup.py                # Verify GPU configuration
 ├── notebooks/
 │   └── context_engineering_lesson.ipynb # Interactive lesson content
 ├── src/
@@ -175,6 +193,23 @@ All components are free to use for educational and commercial purposes.
 3. **"Module not found"** - Ensure virtual environment is activated
 4. **Slow inference** - Expected on CPU; use GPU for faster results
 5. **Models downloading slowly** - Be patient, it's a one-time 6.6 GB download
+
+**GPU-specific troubleshooting:**
+
+1. **GPU not detected** - Run `python scripts/test_gpu_setup.py` to verify GPU setup
+2. **CUDA version mismatch** - The setup auto-detects and installs the correct version
+3. **"CUDA out of memory"** - Your GPU doesn't have enough VRAM; fallback to CPU mode
+4. **AMD GPU not working** - ROCm support is Linux-only; use CPU mode on Windows/Mac
+5. **Verify GPU is being used** - Check output of `python scripts/test_gpu_setup.py`
+
+**Manual GPU testing:**
+```bash
+# Test if GPU detection works
+python scripts/detect_gpu.py
+
+# Verify PyTorch can use your GPU
+python scripts/test_gpu_setup.py
+```
 
 For detailed troubleshooting, see the **Troubleshooting** section in `index.html`.
 

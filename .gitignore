@@ -72,3 +72,4 @@ htmlcov/
 temp/
 /ignore
 .claude/
+.gpu_config.json

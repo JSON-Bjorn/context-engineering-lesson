@@ -195,9 +195,37 @@ echo Upgrading pip...
 %PYTHON_CMD% -m pip install --upgrade pip --quiet
 echo pip upgraded
 
-REM Install dependencies
+REM Detect GPU and install correct PyTorch version
 echo.
-echo Installing dependencies (this may take 3-5 minutes)...
+echo ==================================
+echo Detecting GPU Hardware...
+echo ==================================
+echo.
+%PYTHON_CMD% scripts\detect_gpu.py
+if %errorlevel% neq 0 (
+    echo Error: GPU detection failed
+    pause
+    exit /b 1
+)
+echo.
+
+REM Read GPU config and install PyTorch
+echo Installing PyTorch optimized for your hardware...
+for /f "delims=" %%i in ('%PYTHON_CMD% -c "import json; config = json.load(open('.gpu_config.json')); print(config['pytorch_command'])"') do set PYTORCH_CMD=%%i
+echo Command: %PYTORCH_CMD%
+echo.
+call %PYTORCH_CMD%
+if %errorlevel% neq 0 (
+    echo Error: PyTorch installation failed
+    pause
+    exit /b 1
+)
+echo PyTorch installed successfully
+echo.
+
+REM Install other dependencies (excluding torch)
+echo.
+echo Installing other dependencies (this may take 2-3 minutes)...
 pip install -r requirements.txt
 if %errorlevel% neq 0 (
     echo Error: Failed to install dependencies
@@ -209,12 +237,13 @@ echo Dependencies installed
 REM Verify installation
 echo.
 echo Verifying installation...
-%PYTHON_CMD% -c "import transformers; import torch; import sentence_transformers"
+%PYTHON_CMD% -c "import transformers; import torch; import sentence_transformers; print('PyTorch version:', torch.__version__); print('CUDA available:', torch.cuda.is_available()); print('GPU:', torch.cuda.get_device_name(0) if torch.cuda.is_available() else 'CPU-only')"
 if %errorlevel% neq 0 (
     echo Error: Package verification failed
     pause
     exit /b 1
 )
+echo.
 echo All critical packages installed successfully
 
 REM Success message
