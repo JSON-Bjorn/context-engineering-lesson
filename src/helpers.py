@@ -97,6 +97,10 @@ def calculate_similarity(embedding1: torch.Tensor,
     Returns:
         Similarity score as tensor
     """
+    # Ensure both tensors are on the same device (CPU for compatibility)
+    embedding1 = embedding1.cpu()
+    embedding2 = embedding2.cpu()
+
     if method == 'cosine':
         # Cosine similarity
         similarity = torch.nn.functional.cosine_similarity(

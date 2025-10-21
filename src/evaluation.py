@@ -144,9 +144,9 @@ class LLMEvaluator:
         if self.embedder is None:
             raise ValueError("Embedder required for semantic similarity scoring")
 
-        # Encode both answers
-        answer_emb = self.embedder.encode(answer, convert_to_tensor=True)
-        truth_emb = self.embedder.encode(ground_truth, convert_to_tensor=True)
+        # Encode both answers (ensure CPU for SentenceTransformer compatibility)
+        answer_emb = self.embedder.encode(answer, convert_to_tensor=True).cpu()
+        truth_emb = self.embedder.encode(ground_truth, convert_to_tensor=True).cpu()
 
         # Calculate cosine similarity
         similarity = torch.nn.functional.cosine_similarity(
@@ -300,8 +300,8 @@ def evaluate_answer(answer: str,
     Returns:
         Similarity score 0.0-1.0
     """
-    answer_emb = embedder.encode(answer, convert_to_tensor=True)
-    truth_emb = embedder.encode(ground_truth, convert_to_tensor=True)
+    answer_emb = embedder.encode(answer, convert_to_tensor=True).cpu()
+    truth_emb = embedder.encode(ground_truth, convert_to_tensor=True).cpu()
 
     similarity = torch.nn.functional.cosine_similarity(
         answer_emb.unsqueeze(0),
